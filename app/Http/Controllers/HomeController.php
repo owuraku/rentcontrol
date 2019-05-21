@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Property;
 
 class HomeController extends Controller
 {
@@ -11,18 +12,59 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index($type="all")
     {
-        return view('layouts.home');
+
+        switch($type)
+        {
+            case "buy":
+            $type = 2;
+            break;
+
+            case "rent":
+            $type =1;
+            break;
+
+            default:
+            $type = 3;
+            break;
+        }
+
+        $properties = Property::allAvailableProperties($type);
+        return view('properties.home')->with(['properties'=>$properties, 'personal'=>false]);
     }
+
+    public function getAllProperties($type)
+    {
+        switch($type)
+        {
+            case "buy":
+            $type = 2;
+            break;
+
+            case "rent":
+            $type =1;
+            break;
+
+            default:
+            $type = 3;
+            break;
+        }
+
+        $properties = Property::allAvailableProperties($type);
+        return view('properties.home')->with(['properties'=>$properties, 'personal'=>false]);
+    }
+
+    public function show(Property $property)
+    {
+        $personal = $property->owner_id == auth()->id();
+        return view('properties.show')->with(['property'=>$property, 'personal'=>$personal]);
+    }
+
 }

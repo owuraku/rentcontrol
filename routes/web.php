@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/','PropertyController@myProperties');
+Route::get('/','HomeController@index');
 
 Auth::routes();
 
@@ -21,7 +21,9 @@ Auth::routes();
 Route::get('/property/me','PropertyController@myProperties')->name('property.me');
 Route::get('/property/add', 'PropertyController@addProperty')->name('property.add.form');
 Route::post('/property/add','PropertyController@addProperty')->name('property.add');
-Route::get('/property/{type}', 'PropertyController@getAllProperties')->name('property.all');
-Route::get('/property/show/{property}', 'PropertyController@show')->name('property.get');
+Route::get('/property/{type}', 'HomeController@getAllProperties')->name('property.all');
+Route::get('/property/show/{property}', 'HomeController@show')->name('property.get');
+Route::post('/property/rate/pay', 'PropertyController@payRate')->name('property.pay.rate');
+Route::post('/property/own/pay', 'PropertyController@payForOwnership')->name('property.pay.own');
 Route::put('/property/{property}')->name('property.edit');
 Route::delete('/property/{property}')->name('property.delete');

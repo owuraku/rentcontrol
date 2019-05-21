@@ -13,10 +13,18 @@ class UsersSeeder extends Seeder
     public function run()
     {
         //
-        $faker = Faker::create();
-        factory(App\User::class, 5)->create([
+            $faker = Faker::create();
+
+            factory(App\User::class, 5)->create([
             'phone' => $faker->phoneNumber(),
             'password' => bcrypt('secretpass'),
+            ]);
+
+            factory(App\User::class)->create([
+                'name' => 'Hannah Arthur',
+                'email'=>'hannah@yahoo.com',
+                'phone' => $faker->phoneNumber(),
+                'password' => bcrypt('secretpass'),
         ]);
     }
 }

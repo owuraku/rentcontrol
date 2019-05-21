@@ -3,7 +3,12 @@
 			<div class="sec-title p-b-60">
 				<h3 class="m-text5 t-center">
 					Properties
-				</h3>
+                </h3>
+                @guest
+                <p class="t-center" style="color: red">
+                        Currently, you can only view properties, you need to log in to purchase  or rent a property
+                </p>
+                @endguest
             </div>
             <div class="row">
             @foreach ($properties as $property)
@@ -12,9 +17,10 @@
                 if(!empty($property->toArray()['images']))
                 $imagepath = $property->images->first()->path;
             @endphp
-                    <div class="mr-auto ml-auto col-sm-12 col-md-4 col-lg-3 p-b-50">
+                    <div class="mr-auto ml-auto col-sm-12 col-md-4 col-lg-3 p-b-50"
+                    >
                             <!-- Block2 -->
-                            <div class="block2">
+                            <div class="block2" >
                                 <div class="block2-img wrap-pic-w of-hidden pos-relative">
                                     <img style="max-height:100%" src="{{asset('storage/'.$imagepath)}}" alt="IMG-PRODUCT">
 
@@ -23,25 +29,27 @@
                                             <i class="icon-wishlist icon_heart_alt" aria-hidden="true"></i>
                                             <i class="icon-wishlist icon_heart dis-none" aria-hidden="true"></i>
                                         </a> --}}
+                                        @auth
                                         @if(!$personal)
                                         <div class="block2-btn-wishlist hov-pointer trans-0-4">
                                             <!-- Button -->
-                                            <button  name="book-appointment"
+                                            <button  name="book-appointment" data-prop-id="{{$property->id}}"
                                             class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
                                                 Book Appointment
                                             </button>
                                         </div>
                                         <div class="block2-btn-addcart w-size1 trans-0-4">
                                                 <!-- Button -->
-                                                <button  name="purchase"
+                                                <button  name="purchase" data-prop-id="{{$property->id}}"
                                                 class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
                                                     Purchase
                                                 </button>
                                             </div>
                                         @endif
+                                        @endauth
                                     </div>
                                 </div>
-
+                                    <div class="prop-image" style="cursor: pointer" data-goto="{{route('property.get', ['id' => $property->id])}}">
                                 <div class="block2-txt p-t-20">
                                 <a href="{{route('property.get', ['id' => $property->id])}}" class="block2-name dis-block s-text3 p-b-5">
                                         {{$property->title}}
@@ -56,16 +64,19 @@
                                 </div>
                                     <span class="block2-price m-text6 p-r-5">
                                     <b>
-                                        @if ($property->type=="1")
-                                        {{($property->amount * $property->duration)." GHS (for $property->duration months )"}}
+                                        @if ($property->type==1)
+                                        {{number_format($property->amount * $property->duration, 0)." GHS"}}
+                                        <br>
+                                        {{ "(for {$property->convertMonths()} )"}}
                                         @else
-                                        {{$property->amount. " GHS"}}
+                                        {{ number_format($property->amount,0). " GHS"}}
                                         @endif
                                     </b>
                                     </span>
-                                    
+
 
                                 </div>
+                            </div>
                             </div>
                         </div>
                         @endforeach
@@ -77,8 +88,14 @@
         </div>
     </div>
 	</section>
-@section('scripts')
+    @section('scripts')
 
+<script>
+$('.prop-image').on('click', function(){
+    location.href = $(this).data('goto');
+});
+</script>
+@auth
 <script>
 let book = $('button[name=book-appointment]');
 let purchase =$('button[name=purchase]');
@@ -124,32 +141,12 @@ book.on('click', async function(){
 });
 
 purchase.on('click', function(){
-    Swal.mixin({
-  input: 'text',
-  confirmButtonText: 'Next &rarr;',
-  showCancelButton: true,
-  progressSteps: ['1', '2', '3']
-}).queue([
-  {
-    title: 'Question 1',
-    text: 'Chaining swal2 modals is easy'
-  },
-  'Question 2',
-  'Question 3'
-]).then((result) => {
-  if (result.value) {
-    Swal.fire({
-      title: 'All done!',
-      html:
-        'Your answers: <pre><code>' +
-          JSON.stringify(result.value) +
-        '</code></pre>',
-      confirmButtonText: 'Lovely!'
-    })
-  }
-})
+    let id = $(this).data('prop-id');
+    let url = "{{route('property.pay.own')}}"
+ payment(url, id);
 })
 
 </script>
+@endauth
 
 @endsection

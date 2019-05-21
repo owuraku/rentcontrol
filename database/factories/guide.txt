@@ -1,0 +1,53 @@
+To start the application
+------------------------------------------------------------------
+TYPE 1:
+-open cmd(command line prompt) and navigate to the app folder (eg. cd rentcontrol)
+    ->you can open the folder Visual Studio Code and CLick on "Terminal", "New Terminal"
+-type php artisan serve
+-you should see a message like this (Laravel development server started: <http://127.0.0.1:8000>)
+-open your browser and navigate to http://127.0.0.1:8000 or localhost:8000
+-app should open now
+
+
+To set up application
+---------------------------------------------------------------------
+NB: Since the project has already been set up do use these procedure
+
+make sure to start the wamp server
+
+-open project folder in cmd
+-git pull
+-run php artisan migrate:fresh
+-run php artisan serve to start project
+-login with hannah@yahoo.com, password=>secretpass
+
+FRESH START
+----------------------------------------------------------------
+-pull the project
+-download the zip file I sent via email and unzip the contents into the public folder in the project folder
+-copy .env.example and save as .env
+-edit the settings in the env file , with your database name and password
+-open the folder in cmd
+-enter commands :
+    1. php artisan key:generate
+    2. php artisan config:cache
+    3. php artisan migrate:fresh --seed
+    4. composer dump-autoload -o
+----------------------------------------------------------------
+
+
+
+Data to use
+---------------------------------------------------------------------------
+All accounts have the password "secretpass", you can check the emails from the database users table to log in as another user
+You can log in with this credentials => email: hannah@yahoo.com password: secretpass
+
+when paying for property including the rate
+---------------------------------------------------------------
+when using visa use this number "123456789" as card number
+
+when using mobile money use this number "0244419419" as mobile number
+
+
+
+

@@ -94,4 +94,26 @@ class Property extends Model
         return $image->save();
     }
 
+
+    private function yearfm($months)
+    {
+    $str = '';
+
+    if(($y = round(bcdiv($months, 12))))
+    {
+        $str .= "$y Year".($y-1 ? 's' : null);
+    }
+    if(($m = round($months % 12)))
+    {
+        $str .= ($y ? ' ' : null)."$m Month".($m-1 ? 's' : null);
+    }
+    return empty($str) ? false : $str;
+    }
+
+    public function convertMonths()
+    {
+//        $this->duration = $this->yearfm($this->duration);
+            return $this->yearfm($this->duration);
+    }
+
 }

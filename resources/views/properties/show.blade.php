@@ -17,33 +17,53 @@
                 @endforeach
     </div>
     <div>
-        <p class="block2-txt">
+        <h4 class="block2-txt">
+            <b>
         {{$property->title}}
+            </b>
+        </h4>
         <br>
+        Property Description: <br>
         {{$property->description}}
         <br>
         <span class="block2-price m-text6 p-r-5">
+            <p>
                 <b>
-                    @if ($property->type=="1")
-                    {{($property->amount * $property->duration)." GHS (for $property->duration months )"}}
-                    @else
-                    {{$property->amount. " GHS"}}
-                    @endif
-                </b>
-                </span>
+                        @if ($property->type==1)
+                        {{number_format($property->amount * $property->duration, 0)." GHS"}}
+                        <br>
+                        {{ "(for {$property->convertMonths()} )"}}
+                        @else
+                        {{ number_format($property->amount,0). " GHS"}}
+                        @endif
+                    </b>
+            </p>
+        </span>
+                <div>
+                @auth
                 @if($personal && $property->available())
                 <p class="block2-name dis-block s-text3 p-b-5">
                         This property is available to the public
                 </p>
-                @else
+                @endif
+                @if($personal && !$property->available())
                 <p class="block2-name dis-block s-text3 p-b-5">
                         This property is <strong>not available</strong> to the public.<br>
                         Pay the property rate to make it available
                 </p>
-
+                <button class="btn btn-info" data-prop-id="{{$property->id}}" name="prop-rate-pay">Pay Property Rate</button>
                 @endif
+
+
+                @if(!$personal && $property->available())
+                <button  name="purchase" data-prop-id="{{$property->id}}"
+                        class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
+                            Purchase
+                        </button>
+                @endif
+                @endauth
+            </div>
         <br>
-        </p>
     </div>
 </div>
 
@@ -59,10 +79,33 @@ let thumbs = $('.img-thumbnail');
 
 thumbs.on('click', function(){
     imageFull.attr('src', $(this).attr('src')).fadeIn();
-})
+});
+
 
 });
+
+</script>
+@auth
+<script>
+let propRatePay = $('button[name=prop-rate-pay]');
+
+propRatePay.on('click', function () {
+    let id = $(this).data('prop-id');
+    let url = "{{route('property.pay.rate')}}"
+    payment(url,id);
+    })
 </script>
 
+@if (!$personal && $property->available())
+<script>
+let purchase =$('button[name=purchase]');
+purchase.on('click', function(){
+    let id = $(this).data('prop-id');
+    let url = "{{route('property.pay.own')}}"
+ payment(url, id);
+})
+</script>
+@endif
+@endauth
 @endsection
 

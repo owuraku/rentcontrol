@@ -4,19 +4,19 @@
 		<div class="container-menu-header">
 			<div class="wrap_header">
 				<!-- Logo -->
-				<a href="{{route('property.all', ['type'=>'all'])}}" class="logo">
-					<img src="{{asset('images/icons/logo.png')}}" alt="IMG-LOGO">
+				<a href="{{route('property.all', ['type'=>'all'])}}" class="logo" >
+					<img src="{{asset('images/icons/logo.png')}}" alt="IMG-LOGO" style="max-height: 86px" height="86" width="153">
 				</a>
 
 				<!-- Menu -->
 				<div class="wrap_menu">
 					<nav class="menu">
 						<ul class="main_menu">
-
+                            @auth
 							<li>
                             <a href="{{route('property.me')}}">My Properties</a>
 							</li>
-
+                            @endauth
 							<li class="sale-noti">
                                 <a href="{{route('property.all', ['type' => 'all'])}}">Browse Properties</a>
                                 <ul class="sub_menu">
@@ -47,9 +47,34 @@
 
 				<!-- Header Icon -->
 				<div class="header-icons">
-					<a href="#" class="header-wrapicon1 dis-block">
-						<img src="{{asset('images/icons/icon-header-01.png')}}" class="header-icon1" alt="ICON">
-					</a>
+                        @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        </li>
+                        @if (Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ Auth::user()->name }} <span class="caret"></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                                 document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
+                    @endguest
 
 					<span class="linedivide1"></span>
 				</div>

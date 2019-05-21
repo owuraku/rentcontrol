@@ -11,8 +11,6 @@ class PropertyTableSeeder extends Seeder
      */
     public function run()
     {
-        //
-       // $faker = Faker::create();
         factory(App\Property::class, 15)
         ->create()
         ->each(function($property){

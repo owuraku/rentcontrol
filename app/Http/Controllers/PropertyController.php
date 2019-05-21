@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Property;
 use App\PropertyImage;
+use App\PropertyRatePayment;
 
 class PropertyController extends Controller
 {
@@ -24,27 +25,6 @@ class PropertyController extends Controller
         return view('properties.home')->with(['properties'=>$properties, 'personal'=>true]);
     }
 
-    public function getAllProperties($type)
-    {
-
-        switch($type)
-        {
-            case "buy":
-            $type = 2;
-            break;
-
-            case "rent":
-            $type =1;
-            break;
-
-            default:
-            $type = 3;
-            break;
-        }
-
-        $properties = Property::allAvailableProperties($type);
-        return view('properties.home')->with(['properties'=>$properties, 'personal'=>false]);
-    }
 
     public function addProperty()
     {
@@ -102,14 +82,73 @@ class PropertyController extends Controller
             'success' => $success,
             'errors' => $errors
         ]);
-
-        //if($request)
     }
 
-    public function show(Property $property)
+
+
+    public function payRate()
     {
-        $personal = $property->owner_id == auth()->id();
-        return view('properties.show')->with(['property'=>$property, 'personal'=>$personal]);
+        $this->validate(request(), [
+            'type' => 'required',
+            'number'=>'required|numeric|min:10',
+            'amount' =>'required',
+            ]);
+
+        $errors;
+        if(request()->type=="visa"&&request()->number!=="123456789")
+        $errors="Invalid card number. Please check and try again";
+        if(request()->type=="momo" &&request()->number!="0244419419")
+        $errors="Transaction unsuccessful";
+        if(Property::findOrFail(request()->id)->owner_id !=auth()->id)
+        $errors="Only property owners can pay property rate";
+
+        if(empty($errors))
+        {
+            $payment = new PropertyRatePayment;
+            $payment->property_id = request()->id;
+            $payment->amount = request()->amount;
+            $payment->active_year = \Carbon\Carbon::now()->year;
+            $payment->transaction_id = \Carbon\Carbon::now()->unix().request()->id;
+            if($payment->save())
+            return response()->json(['message' =>"Information saved successfully"]);
+            $errors="Error submitting your request. Please try again.";
+        }
+        return response()->json(['errors' =>$errors]);
+    }
+
+    public function payForOwnership()
+    {
+        $this->validate(request(), [
+            'type' => 'required',
+            'number'=>'required|numeric|min:10',
+            'amount' =>'required',
+            ]);
+
+            $errors;
+        if(request()->type=="visa"&&request()->number!=="123456789")
+        $errors="Invalid card number. Please check and try again";
+        if(request()->type=="momo" &&request()->number!="0244419419")
+        $errors="Transaction unsuccessful";
+
+        $property = Property::findOrFail(request()->id);
+        if(!$property->available())
+        $error="Property not available for public";
+
+        if(empty($errors))
+        {
+            $payment = new PropertyRatePayment;
+            $payment->property_id = request()->id;
+            $payment->amount = request()->amount;
+            $payment->active_year = \Carbon\Carbon::now()->year;
+            $payment->transaction_id = \Carbon\Carbon::now()->unix().request()->id;
+            if($payment->save())
+            return response()->json(['message' =>"Information saved successfully"]);
+            $errors="Error submitting your request. Please try again.";
+        }
+        return response()->json(['errors' =>$errors]);
+
+
+        # code...
     }
 
 }
