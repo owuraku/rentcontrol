@@ -15,8 +15,8 @@ class PropertyTable extends Migration
     {
         //
         Schema::create('properties', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('owner_id');
+            $table->increments('id');
+            $table->integer('owner_id')->unsigned();
             $table->string('title');
             $table->boolean('available')->default(true);
             $table->unsignedTinyInteger('class')->default(1);

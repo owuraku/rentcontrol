@@ -15,9 +15,9 @@ class PropertyPayment extends Migration
     {
         //
         Schema::create('property_payments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('old_owner');
-            $table->unsignedInteger('property_id');
+            $table->increments('id');
+            $table->integer('old_owner')->unsigned();
+            $table->integer('property_id')->unsigned();
             $table->double('amount');
             $table->unsignedSmallInteger('expiry');
             $table->timestamps();

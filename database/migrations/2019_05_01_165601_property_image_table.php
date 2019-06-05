@@ -15,10 +15,16 @@ class PropertyImageTable extends Migration
     {
         //
         Schema::create('property_images', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->unsignedInteger('property_id');
             $table->string('path');
             $table->timestamps();
+
+            $table->foreign('property_id')->
+            references('id')->
+            on('properties')->
+            onDelete('restrict')->
+            onUpdate('cascade');
         });
     }
 

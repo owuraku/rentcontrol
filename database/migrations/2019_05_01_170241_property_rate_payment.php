@@ -15,9 +15,9 @@ class PropertyRatePayment extends Migration
     {
         //
         Schema::create('property_rate_payments', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('transaction_id');
-            $table->unsignedInteger('property_id');
+            $table->integer('property_id')->unsigned();
             $table->double('amount');
             $table->unsignedSmallInteger('active_year');
             $table->timestamps();
